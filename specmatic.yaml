@@ -1,0 +1,12 @@
+sources:
+  - provider: filesystem
+    directory: .
+
+test:
+  baseUrl: "https://localhost:50534"
+  timeoutInMilliseconds: 30000
+  junitReportDir: ./test-results
+
+report:
+  displayReport: true
+  format: html

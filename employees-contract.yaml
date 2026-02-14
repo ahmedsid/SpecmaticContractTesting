@@ -1,0 +1,342 @@
+openapi: 3.0.0
+info:
+  title: Employee Management API
+  version: 1.0.0
+  description: Contract for Employee Management REST API
+  contact:
+    name: Development Team
+    email: dev@company.com
+
+servers:
+  - url: https://localhost:50534
+    description: Development server
+
+paths:
+  /api/employees:
+    get:
+      summary: Get all employees
+      operationId: getAllEmployees
+      tags:
+        - Employees
+      responses:
+        '200':
+          description: Successfully retrieved all employees
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Employee'
+              examples:
+                GET_ALL_EMPLOYEES_SUCCESS:
+                  value:
+                    - id: 1
+                      name: "John Doe"
+                      email: "john.doe@company.com"
+                      department: "Engineering"
+                      position: "Senior Software Engineer"
+                      salary: 120000
+                      status: "Active"
+                      hireDate: "2020-01-15T00:00:00Z"
+                    - id: 2
+                      name: "Jane Smith"
+                      email: "jane.smith@company.com"
+                      department: "Product"
+                      position: "Product Manager"
+                      salary: 110000
+                      status: "Active"
+                      hireDate: "2019-06-20T00:00:00Z"
+
+    post:
+      summary: Create a new employee
+      operationId: createEmployee
+      tags:
+        - Employees
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEmployeeRequest'
+            examples:
+              CREATE_EMPLOYEE_REQUEST:
+                value:
+                  name: "Alice Cooper"
+                  email: "alice.cooper@company.com"
+                  department: "HR"
+                  position: "HR Manager"
+                  salary: 95000
+                  status: "Active"
+                  hireDate: "2022-05-10T00:00:00Z"
+      responses:
+        '201':
+          description: Employee created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+              examples:
+                CREATE_EMPLOYEE_SUCCESS:
+                  value:
+                    id: 4
+                    name: "Alice Cooper"
+                    email: "alice.cooper@company.com"
+                    department: "HR"
+                    position: "HR Manager"
+                    salary: 95000
+                    status: "Active"
+                    hireDate: "2022-05-10T00:00:00Z"
+        '400':
+          description: Invalid employee data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                CREATE_EMPLOYEE_INVALID_NAME:
+                  value:
+                    message: "Employee name is required"
+
+  /api/employees/{id}:
+    get:
+      summary: Get employee by ID
+      operationId: getEmployeeById
+      tags:
+        - Employees
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Employee ID
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Employee found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+              examples:
+                GET_EMPLOYEE_BY_ID_SUCCESS:
+                  value:
+                    id: 1
+                    name: "John Doe"
+                    email: "john.doe@company.com"
+                    department: "Engineering"
+                    position: "Senior Software Engineer"
+                    salary: 120000
+                    status: "Active"
+                    hireDate: "2020-01-15T00:00:00Z"
+        '404':
+          description: Employee not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                GET_EMPLOYEE_NOT_FOUND:
+                  value:
+                    message: "Employee with ID 999 not found"
+
+    put:
+      summary: Update an employee
+      operationId: updateEmployee
+      tags:
+        - Employees
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Employee ID
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEmployeeRequest'
+            examples:
+              UPDATE_EMPLOYEE_REQUEST:
+                value:
+                  name: "John Doe Updated"
+                  email: "john.updated@company.com"
+                  department: "Engineering"
+                  position: "Lead Software Engineer"
+                  salary: 130000
+                  status: "Active"
+                  hireDate: "2020-01-15T00:00:00Z"
+      responses:
+        '204':
+          description: Employee updated successfully
+        '404':
+          description: Employee not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                UPDATE_EMPLOYEE_NOT_FOUND:
+                  value:
+                    message: "Employee with ID 999 not found"
+        '400':
+          description: Invalid employee data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete an employee
+      operationId: deleteEmployee
+      tags:
+        - Employees
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Employee ID
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '204':
+          description: Employee deleted successfully
+        '404':
+          description: Employee not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                DELETE_EMPLOYEE_NOT_FOUND:
+                  value:
+                    message: "Employee with ID 999 not found"
+
+components:
+  schemas:
+    Employee:
+      type: object
+      required:
+        - id
+        - name
+        - email
+        - department
+        - position
+        - salary
+        - status
+        - hireDate
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the employee
+          example: 1
+        name:
+          type: string
+          description: Full name of the employee
+          example: "John Doe"
+          minLength: 1
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          description: Email address of the employee
+          example: "john.doe@company.com"
+        department:
+          type: string
+          description: Department where employee works
+          example: "Engineering"
+          minLength: 1
+          maxLength: 50
+        position:
+          type: string
+          description: Job position/title
+          example: "Senior Software Engineer"
+          minLength: 1
+          maxLength: 100
+        salary:
+          type: number
+          format: double
+          description: Annual salary in USD
+          example: 120000
+          minimum: 0
+        status:
+          type: string
+          description: Employee status (Active, Inactive, On Leave)
+          enum:
+            - Active
+            - Inactive
+            - On Leave
+          example: "Active"
+        hireDate:
+          type: string
+          format: date-time
+          description: Date when employee was hired
+          example: "2020-01-15T00:00:00Z"
+
+    CreateEmployeeRequest:
+      type: object
+      required:
+        - name
+        - email
+        - department
+        - position
+        - salary
+        - status
+        - hireDate
+      properties:
+        name:
+          type: string
+          description: Full name of the employee
+          example: "Alice Cooper"
+          minLength: 1
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          description: Email address of the employee
+          example: "alice.cooper@company.com"
+        department:
+          type: string
+          description: Department where employee works
+          example: "HR"
+          minLength: 1
+          maxLength: 50
+        position:
+          type: string
+          description: Job position/title
+          example: "HR Manager"
+          minLength: 1
+          maxLength: 100
+        salary:
+          type: number
+          format: double
+          description: Annual salary in USD
+          example: 95000
+          minimum: 0
+        status:
+          type: string
+          description: Employee status
+          enum:
+            - Active
+            - Inactive
+            - On Leave
+          example: "Active"
+        hireDate:
+          type: string
+          format: date-time
+          description: Date when employee was hired
+          example: "2022-05-10T00:00:00Z"
+
+    ErrorResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: Error message
+          example: "Employee with ID 999 not found"

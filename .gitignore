@@ -1,0 +1,27 @@
+﻿# Create .gitignore
+echo "# Visual Studio
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.sln.docstates
+
+# Dependencies
+node_modules/
+npm-debug.log
+
+# Test results
+test-results/
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+
+# IDEs
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db" > .gitignore
