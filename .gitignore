@@ -1,5 +1,4 @@
-﻿# Create .gitignore
-echo "# Visual Studio
+﻿# Visual Studio
 bin/
 obj/
 .vs/
@@ -24,4 +23,4 @@ test-results/
 
 # OS files
 .DS_Store
-Thumbs.db" > .gitignore
+Thumbs.db
